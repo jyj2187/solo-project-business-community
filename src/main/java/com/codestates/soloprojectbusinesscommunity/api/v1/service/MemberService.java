@@ -28,35 +28,34 @@ public class MemberService {
         return new MemberResponseDto(member);
     }
 
-    public Page<MemberResponseDto> findMembers(String companyType, String companyLocation, PageRequest pageRequest) {
+    public Page<MemberResponseDto> findMembers(String companyType, String companyLocation, Pageable pageable) {
         List<MemberResponseDto> memberResponseDtoList;
 
         if (!companyLocation.isEmpty() && !companyType.isEmpty()) {
             memberResponseDtoList = memberRepository
-                    .findByCompanyTypeAndCompanyLocation(companyType, companyLocation).stream()
+                    .findByCompanyTypeAndCompanyLocation(companyType, companyLocation, pageable).stream()
                     .map(MemberResponseDto::new)
                     .collect(Collectors.toList());
 
         } else if (!companyLocation.isEmpty()) {
             memberResponseDtoList = memberRepository
-                    .findByCompanyLocation(companyLocation).stream()
+                    .findByCompanyLocation(companyLocation, pageable).stream()
                     .map(MemberResponseDto::new)
                     .collect(Collectors.toList());
 
         } else if (!companyType.isEmpty()) {
             memberResponseDtoList = memberRepository
-                    .findByCompanyType(companyType).stream()
+                    .findByCompanyType(companyType, pageable).stream()
                     .map(MemberResponseDto::new)
                     .collect(Collectors.toList());
 
         } else {
-            memberResponseDtoList = memberRepository.findAll().stream()
+            memberResponseDtoList = memberRepository.findAll(pageable).stream()
                     .map(MemberResponseDto::new)
                     .collect(Collectors.toList());
         }
 
-        long total = memberRepository.count();
-        return new PageImpl<>(memberResponseDtoList, pageRequest, total);
+        return new PageImpl<>(memberResponseDtoList);
     }
 
 
