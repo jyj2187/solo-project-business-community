@@ -1,8 +1,7 @@
 package com.codestates.soloprojectbusinesscommunity.api.v1.controller;
 
-import com.codestates.soloprojectbusinesscommunity.api.v1.dto.MemberRequestDto;
-import com.codestates.soloprojectbusinesscommunity.api.v1.dto.MemberResponseDto;
-import com.codestates.soloprojectbusinesscommunity.api.v1.dto.MemberUpdateDto;
+import com.codestates.soloprojectbusinesscommunity.api.v1.domain.Member;
+import com.codestates.soloprojectbusinesscommunity.api.v1.dto.*;
 import com.codestates.soloprojectbusinesscommunity.api.v1.service.MemberService;
 import com.google.gson.Gson;
 import com.jayway.jsonpath.JsonPath;
@@ -204,23 +203,33 @@ public class MemberControllerTest {
     @Test
     public void getMembersTest() throws Exception {
         //given
+        Page<Member> memberPage = new PageImpl<>(
+                List.of(new Member("김코딩", "password", "m", "프로젝트스테이츠", "005", "001"),
+                        new Member("박코드", "password", "m", "프로젝트스테이츠", "001", "005"),
+                        new Member("정해커", "password", "m", "프로젝트스테이츠", "001", "001"),
+                        new Member("이버그", "password", "m", "프로젝트스테이츠", "005", "005"),
+                        new Member("최개발", "password", "m", "프로젝트스테이츠", "003", "003")
+                ),
+                PageRequest.of(0, 10), 5);
 
-        MemberResponseDto responseDto1 = new MemberResponseDto(
-                1L, "김코딩", "m", "프로젝트스테이츠", "005", "001");
-        MemberResponseDto responseDto2 = new MemberResponseDto(
+        PageInfo pageInfo = new PageInfo(memberPage);
+
+        MemberResponseDto memberResponseDto1 = new MemberResponseDto(
+                1L,"김코딩", "m", "프로젝트스테이츠", "005", "001");
+        MemberResponseDto memberResponseDto2 = new MemberResponseDto(
                 2L, "박코드", "m", "프로젝트스테이츠", "001", "005");
-        MemberResponseDto responseDto3 = new MemberResponseDto(
+        MemberResponseDto memberResponseDto3 = new MemberResponseDto(
                 3L, "정해커", "m", "프로젝트스테이츠", "001", "001");
-        MemberResponseDto responseDto4 = new MemberResponseDto(
-                4L, "이버그", "m", "프로젝트스테이츠", "005", "005");
-        MemberResponseDto responseDto5 = new MemberResponseDto(
-                5L, "최개발", "m", "프로젝트스테이츠", "003", "003");
+        MemberResponseDto memberResponseDto4 = new MemberResponseDto(
+                4L, "이버그",  "m", "프로젝트스테이츠", "005", "005");
+        MemberResponseDto memberResponseDto5 = new MemberResponseDto(
+                5L, "최개발",  "m", "프로젝트스테이츠", "003", "003");
 
-        Page<MemberResponseDto> responseDtoPage = new PageImpl<>(
-                List.of(responseDto1, responseDto2, responseDto3, responseDto4, responseDto5));
+        MemberListResponseDto listResponseDto = new MemberListResponseDto(
+                List.of(memberResponseDto1, memberResponseDto2, memberResponseDto3, memberResponseDto4, memberResponseDto5), pageInfo);
 
         //Mock
-        given(memberService.findMembers(Mockito.anyString(), Mockito.anyString(), Mockito.any(PageRequest.class))).willReturn(responseDtoPage);
+        given(memberService.findMembers(Mockito.anyString(), Mockito.anyString(), Mockito.any(PageRequest.class))).willReturn(listResponseDto);
 
         //when
         ResultActions actions = mockMvc.perform(
@@ -245,52 +254,43 @@ public class MemberControllerTest {
                                         ),
                                         responseFields(
                                                 Arrays.asList(
-                                                        fieldWithPath("content").type(JsonFieldType.ARRAY).description("회원").optional(),
-                                                        fieldWithPath("content[].id").type(JsonFieldType.NUMBER).description("회원 식별자"),
-                                                        fieldWithPath("content[].name").type(JsonFieldType.STRING).description("이름"),
-                                                        fieldWithPath("content[].sex").type(JsonFieldType.STRING).description("성별"),
-                                                        fieldWithPath("content[].companyName").type(JsonFieldType.STRING).description("회사명"),
-                                                        fieldWithPath("content[].companyType").type(JsonFieldType.STRING).description("회사 업종 코드"),
-                                                        fieldWithPath("content[].companyLocation").type(JsonFieldType.STRING).description("회사 지역 코드"),
-                                                        fieldWithPath("number").type(JsonFieldType.NUMBER).description("페이지 번호 - 1 ('0'이 첫번째 페이지)"),
-                                                        fieldWithPath("size").type(JsonFieldType.NUMBER).description("페이지 크기"),
-                                                        fieldWithPath("numberOfElements").type(JsonFieldType.NUMBER).description("페이지 내 건 수"),
-                                                        fieldWithPath("totalElements").type(JsonFieldType.NUMBER).description("전체 건 수"),
-                                                        fieldWithPath("totalPages").type(JsonFieldType.NUMBER).description("전체 페이지 수"),
-                                                        fieldWithPath("pageable").ignored(),
-                                                        fieldWithPath("last").ignored(),
-                                                        fieldWithPath("sort.*").ignored(),
-                                                        fieldWithPath("first").ignored(),
-                                                        fieldWithPath("empty").ignored()
+                                                        fieldWithPath("memberList").type(JsonFieldType.ARRAY).description("회원").optional(),
+                                                        fieldWithPath("memberList[].id").type(JsonFieldType.NUMBER).description("회원 식별자"),
+                                                        fieldWithPath("memberList[].name").type(JsonFieldType.STRING).description("이름"),
+                                                        fieldWithPath("memberList[].sex").type(JsonFieldType.STRING).description("성별"),
+                                                        fieldWithPath("memberList[].companyName").type(JsonFieldType.STRING).description("회사명"),
+                                                        fieldWithPath("memberList[].companyType").type(JsonFieldType.STRING).description("회사 업종 코드"),
+                                                        fieldWithPath("memberList[].companyLocation").type(JsonFieldType.STRING).description("회사 지역 코드"),
+                                                        fieldWithPath("pageInfo.page").type(JsonFieldType.NUMBER).description("페이지 번호"),
+                                                        fieldWithPath("pageInfo.size").type(JsonFieldType.NUMBER).description("페이지 크기"),
+                                                        fieldWithPath("pageInfo.totalElements").type(JsonFieldType.NUMBER).description("전체 건 수"),
+                                                        fieldWithPath("pageInfo.totalPages").type(JsonFieldType.NUMBER).description("전체 페이지 수")
                                                 )
                                         )
                                 )
                         )
                         .andReturn();
 
-        List list = JsonPath.parse(result.getResponse().getContentAsString()).read("$.content");
+        List list = JsonPath.parse(result.getResponse().getContentAsString()).read("$.memberList");
         assertThat(list.size(), is(5));
     }
 
     @Test
     public void getMembersWithConditionTest() throws Exception {
         //given
-        MemberResponseDto responseDto1 = new MemberResponseDto(
-                1L, "김코딩", "m", "프로젝트스테이츠", "005", "001");
-        MemberResponseDto responseDto2 = new MemberResponseDto(
-                2L, "박코드", "m", "프로젝트스테이츠", "001", "005");
-        MemberResponseDto responseDto3 = new MemberResponseDto(
-                3L, "정해커", "m", "프로젝트스테이츠", "001", "001");
-        MemberResponseDto responseDto4 = new MemberResponseDto(
-                4L, "이버그", "m", "프로젝트스테이츠", "005", "005");
-        MemberResponseDto responseDto5 = new MemberResponseDto(
-                5L, "최개발", "m", "프로젝트스테이츠", "003", "003");
+        Page<Member> memberPage = new PageImpl<>(
+                List.of(new Member("김코딩", "password", "m", "프로젝트스테이츠", "005", "001")),
+                PageRequest.of(0, 10), 1);
 
-        Page<MemberResponseDto> responseDtoPage = new PageImpl<>(
-                List.of(responseDto1));
+        PageInfo pageInfo = new PageInfo(memberPage);
+
+        MemberResponseDto memberResponseDto1 = new MemberResponseDto(
+                1L,"김코딩", "m", "프로젝트스테이츠", "005", "001");
+
+        MemberListResponseDto listResponseDto = new MemberListResponseDto(List.of(memberResponseDto1), pageInfo);
 
         //Mock
-        given(memberService.findMembers(Mockito.anyString(), Mockito.anyString(), Mockito.any(PageRequest.class))).willReturn(responseDtoPage);
+        given(memberService.findMembers(Mockito.anyString(), Mockito.anyString(), Mockito.any(PageRequest.class))).willReturn(listResponseDto);
 
         //when
         ResultActions actions = mockMvc.perform(
@@ -306,8 +306,8 @@ public class MemberControllerTest {
         MvcResult result =
                 actions
                         .andExpect(status().isOk())
-                        .andExpect(jsonPath("$.content[0].companyType").value(responseDto1.getCompanyType()))
-                        .andExpect(jsonPath("$.content[0].companyLocation").value(responseDto1.getCompanyLocation()))
+                        .andExpect(jsonPath("$.memberList[0].companyType").value(memberResponseDto1.getCompanyType()))
+                        .andExpect(jsonPath("$.memberList[0].companyLocation").value(memberResponseDto1.getCompanyLocation()))
                         .andDo(document("get-members-with-condition",
                                         getRequestPreProcessor(),
                                         getResponsePreProcessor(),
@@ -321,30 +321,24 @@ public class MemberControllerTest {
                                         ),
                                         responseFields(
                                                 Arrays.asList(
-                                                        fieldWithPath("content").type(JsonFieldType.ARRAY).description("회원").optional(),
-                                                        fieldWithPath("content[].id").type(JsonFieldType.NUMBER).description("회원 식별자"),
-                                                        fieldWithPath("content[].name").type(JsonFieldType.STRING).description("이름"),
-                                                        fieldWithPath("content[].sex").type(JsonFieldType.STRING).description("성별"),
-                                                        fieldWithPath("content[].companyName").type(JsonFieldType.STRING).description("회사명"),
-                                                        fieldWithPath("content[].companyType").type(JsonFieldType.STRING).description("회사 업종 코드"),
-                                                        fieldWithPath("content[].companyLocation").type(JsonFieldType.STRING).description("회사 지역 코드"),
-                                                        fieldWithPath("number").type(JsonFieldType.NUMBER).description("페이지 번호 - 1 ('0'이 첫번째 페이지)"),
-                                                        fieldWithPath("size").type(JsonFieldType.NUMBER).description("페이지 크기"),
-                                                        fieldWithPath("numberOfElements").type(JsonFieldType.NUMBER).description("페이지 내 건 수"),
-                                                        fieldWithPath("totalElements").type(JsonFieldType.NUMBER).description("전체 건 수"),
-                                                        fieldWithPath("totalPages").type(JsonFieldType.NUMBER).description("전체 페이지 수"),
-                                                        fieldWithPath("pageable").ignored(),
-                                                        fieldWithPath("last").ignored(),
-                                                        fieldWithPath("sort.*").ignored(),
-                                                        fieldWithPath("first").ignored(),
-                                                        fieldWithPath("empty").ignored()
+                                                        fieldWithPath("memberList").type(JsonFieldType.ARRAY).description("회원").optional(),
+                                                        fieldWithPath("memberList[].id").type(JsonFieldType.NUMBER).description("회원 식별자"),
+                                                        fieldWithPath("memberList[].name").type(JsonFieldType.STRING).description("이름"),
+                                                        fieldWithPath("memberList[].sex").type(JsonFieldType.STRING).description("성별"),
+                                                        fieldWithPath("memberList[].companyName").type(JsonFieldType.STRING).description("회사명"),
+                                                        fieldWithPath("memberList[].companyType").type(JsonFieldType.STRING).description("회사 업종 코드"),
+                                                        fieldWithPath("memberList[].companyLocation").type(JsonFieldType.STRING).description("회사 지역 코드"),
+                                                        fieldWithPath("pageInfo.page").type(JsonFieldType.NUMBER).description("페이지 번호"),
+                                                        fieldWithPath("pageInfo.size").type(JsonFieldType.NUMBER).description("페이지 크기"),
+                                                        fieldWithPath("pageInfo.totalElements").type(JsonFieldType.NUMBER).description("전체 건 수"),
+                                                        fieldWithPath("pageInfo.totalPages").type(JsonFieldType.NUMBER).description("전체 페이지 수")
                                                 )
                                         )
                                 )
                         )
                         .andReturn();
 
-        List list = JsonPath.parse(result.getResponse().getContentAsString()).read("$.content");
+        List list = JsonPath.parse(result.getResponse().getContentAsString()).read("$.memberList");
         assertThat(list.size(), is(1));
     }
 

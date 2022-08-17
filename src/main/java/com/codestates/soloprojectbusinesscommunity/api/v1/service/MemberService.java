@@ -1,12 +1,15 @@
 package com.codestates.soloprojectbusinesscommunity.api.v1.service;
 
 import com.codestates.soloprojectbusinesscommunity.api.v1.domain.Member;
+import com.codestates.soloprojectbusinesscommunity.api.v1.dto.MemberListResponseDto;
 import com.codestates.soloprojectbusinesscommunity.api.v1.dto.MemberRequestDto;
 import com.codestates.soloprojectbusinesscommunity.api.v1.dto.MemberResponseDto;
 import com.codestates.soloprojectbusinesscommunity.api.v1.dto.MemberUpdateDto;
 import com.codestates.soloprojectbusinesscommunity.api.v1.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
@@ -28,38 +31,29 @@ public class MemberService {
         return new MemberResponseDto(member);
     }
 
-    public Page<MemberResponseDto> findMembers(String companyType, String companyLocation, Pageable pageable) {
-        List<MemberResponseDto> memberResponseDtoList;
+    public MemberListResponseDto findMembers(String companyType, String companyLocation, PageRequest pageRequest) {
+        Page<Member> memberPage;
 
         if (!companyLocation.isEmpty() && !companyType.isEmpty()) {
-            memberResponseDtoList = memberRepository
-                    .findByCompanyTypeAndCompanyLocation(companyType, companyLocation, pageable).stream()
-                    .map(MemberResponseDto::new)
-                    .collect(Collectors.toList());
-
+            memberPage = memberRepository
+                    .findByCompanyTypeAndCompanyLocation(companyType, companyLocation, pageRequest);
         } else if (!companyLocation.isEmpty()) {
-            memberResponseDtoList = memberRepository
-                    .findByCompanyLocation(companyLocation, pageable).stream()
-                    .map(MemberResponseDto::new)
-                    .collect(Collectors.toList());
-
+            memberPage = memberRepository
+                    .findByCompanyLocation(companyLocation, pageRequest);
         } else if (!companyType.isEmpty()) {
-            memberResponseDtoList = memberRepository
-                    .findByCompanyType(companyType, pageable).stream()
-                    .map(MemberResponseDto::new)
-                    .collect(Collectors.toList());
-
-        } else {
-            memberResponseDtoList = memberRepository.findAll(pageable).stream()
-                    .map(MemberResponseDto::new)
-                    .collect(Collectors.toList());
+            memberPage = memberRepository
+                    .findByCompanyType(companyType, pageRequest);
+        }
+        else {
+            memberPage = memberRepository.findAll(pageRequest);
         }
 
-        return new PageImpl<>(memberResponseDtoList);
+        List<Member> memberList = memberPage.getContent();
+        return new MemberListResponseDto(memberList, memberPage);
     }
 
 
-    public MemberResponseDto updateMember(Long memberId, @Valid MemberUpdateDto memberUpdateDto) {
+    public MemberResponseDto updateMember(Long memberId, MemberUpdateDto memberUpdateDto) {
         String company_name = memberUpdateDto.getCompanyName();
         String company_type = memberUpdateDto.getCompanyType();
         String company_location = memberUpdateDto.getCompanyLocation();
