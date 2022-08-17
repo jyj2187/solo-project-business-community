@@ -9,7 +9,6 @@
 
 v1.0.0, 2022.08.17
 
-***
 == MemberController
 === 회원 등록
 .curl-request

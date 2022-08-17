@@ -28,13 +28,6 @@ public class MemberService {
         return new MemberResponseDto(member);
     }
 
-//    public List<MemberResponseDto> findMembers(int page, int size) {
-//        page--;
-//        return memberRepository.findAll().stream()
-//                .map(MemberResponseDto::new)
-//                .collect(Collectors.toList());
-//    }
-
     public Page<MemberResponseDto> findMembers(String companyType, String companyLocation, PageRequest pageRequest) {
         List<MemberResponseDto> memberResponseDtoList;
 
@@ -57,7 +50,7 @@ public class MemberService {
                     .collect(Collectors.toList());
 
         } else {
-            memberResponseDtoList = memberRepository.findAll(pageRequest).stream()
+            memberResponseDtoList = memberRepository.findAll().stream()
                     .map(MemberResponseDto::new)
                     .collect(Collectors.toList());
         }
