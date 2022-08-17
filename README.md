@@ -14,3 +14,11 @@
 - 회원 수정
 - 회원 삭제
 
+회원 정보
+- 식별자: Long id; (기본키)
+- 이름: String name
+- 비밀번호: String password
+- 성별: String sex
+- 사명:  String company_name
+- 업종: String company_type
+- 지역: String company_location

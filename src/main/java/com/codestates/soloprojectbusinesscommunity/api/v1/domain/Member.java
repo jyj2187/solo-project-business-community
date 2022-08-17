@@ -19,17 +19,26 @@ public class Member {
     private String name;
     private String password;
     private String sex;
-    private String company_name;
-    private String company_type;
-    private String company_location;
+    private String companyName;
+    private String companyType;
+    private String companyLocation;
 
-//    @Builder
-    public Member(String name, String password, String sex, String company_name, String company_type, String company_location) {
+    @Builder
+    public Member(String name, String password, String sex, String companyName, String companyType, String companyLocation) {
         this.name = name;
         this.password = password;
         this.sex = sex;
-        this.company_name = company_name;
-        this.company_type = company_type;
-        this.company_location = company_location;
+        this.companyName = companyName;
+        this.companyType = companyType;
+        this.companyLocation = companyLocation;
+    }
+
+    public void changePassword(String password) {
+        this.password = password;
+    }
+    public void update(String companyName, String companyType, String companyLocation) {
+        this.companyName = companyName;
+        this.companyType = companyType;
+        this.companyLocation = companyLocation;
     }
 }
