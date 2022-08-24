@@ -8,13 +8,10 @@ import com.codestates.soloprojectbusinesscommunity.api.v1.dto.MemberUpdateDto;
 import com.codestates.soloprojectbusinesscommunity.api.v1.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service

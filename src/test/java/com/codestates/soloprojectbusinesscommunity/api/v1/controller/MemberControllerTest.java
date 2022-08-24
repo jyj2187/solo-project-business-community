@@ -3,6 +3,7 @@ package com.codestates.soloprojectbusinesscommunity.api.v1.controller;
 import com.codestates.soloprojectbusinesscommunity.api.v1.domain.Member;
 import com.codestates.soloprojectbusinesscommunity.api.v1.dto.*;
 import com.codestates.soloprojectbusinesscommunity.api.v1.service.MemberService;
+import com.codestates.soloprojectbusinesscommunity.api.v1.utils.PageInfo;
 import com.google.gson.Gson;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;

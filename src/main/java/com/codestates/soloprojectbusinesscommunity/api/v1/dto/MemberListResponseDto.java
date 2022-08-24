@@ -1,6 +1,7 @@
 package com.codestates.soloprojectbusinesscommunity.api.v1.dto;
 
 import com.codestates.soloprojectbusinesscommunity.api.v1.domain.Member;
+import com.codestates.soloprojectbusinesscommunity.api.v1.utils.PageInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.data.domain.Page;

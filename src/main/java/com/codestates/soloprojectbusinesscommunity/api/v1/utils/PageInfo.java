@@ -1,4 +1,4 @@
-package com.codestates.soloprojectbusinesscommunity.api.v1.dto;
+package com.codestates.soloprojectbusinesscommunity.api.v1.utils;
 
 import lombok.Getter;
 import org.springframework.data.domain.Page;
